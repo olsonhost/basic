@@ -768,7 +768,7 @@ class OperatorExpression implements Expression {
  **/
 class BasicParserException extends Exception { }
 
-$sourcefi = 'default.bas';
+$sourcefi = 'default.basic';
 
 if (php_sapi_name() == 'cli') {
     // We need a file argument
@@ -779,14 +779,81 @@ if (php_sapi_name() == 'cli') {
     } else {
         $sourcefi = $argv[1];
     }
+} else {
+    session_start();
+    if (isset($_REQUEST['src'])) {
+        $sourcefi = $_REQUEST['src'];
+    }
+
 }
 
-if (isset($_REQUEST['src'])) {
-    $sourcefi = $_REQUEST['src'];
+$host = 'localhost';
+$db   = 'yore';
+$user = 'heidi';
+$pass = 'Mermaid7!!';
+$port = "3306";
+$charset = 'utf8mb4';
+
+$options = [
+    \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
+    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+    \PDO::ATTR_EMULATE_PREPARES   => false,
+];
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset;port=$port";
+try {
+    $pdo = new \PDO($dsn, $user, $pass, $options);
+} catch (\PDOException $e) {
+    throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 
 // Get the file
-$source = file_get_contents($sourcefi);
+if (file_exists($sourcefi)) {
+
+    $source = file_get_contents($sourcefi);
+
+} else {
+
+    //echo '< ? xml version="1.0" encoding="UTF-8" ? >   <Response>';
+
+    $Digits = false;
+
+    date_default_timezone_set('America/New_York');
+
+    file_put_contents('request.json', json_encode($_REQUEST, JSON_PRETTY_PRINT));
+
+    $QuestionMarks = '';
+    $InsertFields = '';
+    $InsertValues = [];
+
+    foreach ($_REQUEST as $fld => $val) {
+        $QuestionMarks .= '?, ';
+        $InsertFields .= "`$fld`,";
+        $InsertValues[] = $val;
+    }
+
+    try {
+
+        $sql = "INSERT INTO twilio_log ($InsertFields `status`) VALUES ($QuestionMarks '0')";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($InsertValues);
+
+    } catch (\Exception $e) {
+        exit("<Sms>" . $e->getMessage() .  "</Sms></Response>");
+    }
+
+    // Now get the BASIC program from the Twilite SQL table
+
+    $sql = "SELECT * FROM twilite WHERE `To` = 'default'";
+    $stmt = $pdo->prepare($sql);
+    $r = $stmt->execute();
+    $rows = $stmt->fetchAll();
+    //var_dump($rows);
+    if ($rows) {
+        $row=$rows[0];
+        $source = $row['code'];
+    }
+
+}
 
 // Parse for metadata, directives, and includes
 
