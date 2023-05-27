@@ -1,0 +1,2 @@
+# Hewdy
+chmod -R 775 * && chown -R root:www-data *

@@ -12,6 +12,34 @@
  **/
 
 /**
+ * A big long list of constants for tokens. Each token represents
+ * something in the code
+ */
+const TOKEN_WORD = 1;
+const TOKEN_NUMBER = 2;
+const TOKEN_STRING = 3;
+const TOKEN_LABEL = 4;
+const TOKEN_EQUALS = 5;
+const TOKEN_OPERATOR = 6;
+const TOKEN_LEFT_PARENTHESIES = 7;
+const TOKEN_RIGHT_PARENTHESIES = 8;
+const TOKEN_EOF = 9;
+
+/**
+ * These constants represent the tokeniser's current state; the
+ * tokeniser is built as a state machine. To clarify, if we are
+ * tokenising and we come across a string, we need to remember
+ * that we're inside a string. We then need to break out of it when
+ * the string is terminated.
+ */
+const S_DEFAULT = 1;
+const S_WORD = 2;
+const S_NUMBER = 3;
+const S_STRING = 4;
+const S_COMMENT = 5;
+
+
+/**
  * The main Basic class
  *
  * @package basic
@@ -19,33 +47,7 @@
  **/
 class Basic {
 	
-	/**
-	 * A big long list of constants for tokens. Each token represents
-	 * something in the code
-	 */
-	const TOKEN_WORD = 1;
-	const TOKEN_NUMBER = 2;
-	const TOKEN_STRING = 3;
-	const TOKEN_LABEL = 4;
-	const TOKEN_EQUALS = 5;
-	const TOKEN_OPERATOR = 6;
-	const TOKEN_LEFT_PARENTHESIES = 7;
-	const TOKEN_RIGHT_PARENTHESIES = 8;
-	const TOKEN_EOF = 9;
-	
-	/**
-	 * These constants represent the tokeniser's current state; the
-	 * tokeniser is built as a state machine. To clarify, if we are
-	 * tokenising and we come across a string, we need to remember
-	 * that we're inside a string. We then need to break out of it when
-	 * the string is terminated.
-	 */
-	const S_DEFAULT = 1;
-	const S_WORD = 2;
-	const S_NUMBER = 3;
-	const S_STRING = 4;
-	const S_COMMENT = 5;
-	
+
 	/**
 	 * The Basic class acts as the lexer and intepreter, so we want to keep
 	 * track of a few bits during interpretation, including variables
@@ -303,10 +305,10 @@ class Parser {
 		// Keep track of statements and labels
 		$statements = array();
 		$labels = array();
-		
+
 		// Infinite loop; we'll use $this->position to keep
 		// track of when we're done
-		while (TRUE) {
+		while (isset($this->current()->token)) {
 			// Is this a label?
 			if ($this->match(TOKEN_LABEL)) {
 				// Record this label, linking it to the current index of the 
@@ -387,7 +389,7 @@ class Parser {
 	 * @author Jamie Rumbelow
 	 **/
 	public function current() {
-		return $this->tokens[$this->position];
+		return $this->tokens[$this->position] ?? false;
 	}
 	
 	/**
@@ -459,7 +461,7 @@ class Parser {
 	public function match($token_one, $token_two = FALSE) {
 		if (!$token_two) {
 			// Compare and return
-			if ($this->current()->type == $token_one) {
+			if (($this->current()->type ?? false) == $token_one) {
 				// Increment the position
 				$this->position++;
 				
