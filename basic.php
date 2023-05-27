@@ -768,15 +768,30 @@ class OperatorExpression implements Expression {
  **/
 class BasicParserException extends Exception { }
 
-// We need a file argument
-if (!isset($argv[1])) {
-	echo "\033[0;32mUsage: php basic.php <file>\n";
-	echo "\tWhere <file> is the BASIC file to parse\n\033[0m";
-} else {
-	// Get the file
-	$source = file_get_contents($argv[1]);
+$sourcefi = 'default.bas';
 
-	// Create a new parser
-	$basic = new Basic();
-	$basic->interpret($source);
+if (php_sapi_name() == 'cli') {
+    // We need a file argument
+    if (!isset($argv[1])) {
+        echo "\nUsage: php basic.php <file>";
+        echo "\n       Where <file> is the BASIC file to parse\n";
+        exit(0);
+    } else {
+        $sourcefi = $argv[1];
+    }
 }
+
+if (isset($_REQUEST['src'])) {
+    $sourcefi = $_REQUEST['src'];
+}
+
+// Get the file
+$source = file_get_contents($sourcefi);
+
+// Parse for metadata, directives, and includes
+
+// Prep for symbols
+
+// Create a new parser
+$basic = new Basic();
+$basic->interpret($source);
