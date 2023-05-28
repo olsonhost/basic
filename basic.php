@@ -863,7 +863,7 @@ if (file_exists($sourcefi)) {
 
     // Now get the BASIC program from the Twilite SQL table
 
-    $sql = "SELECT * FROM twilite WHERE `To` LIKE '%%' or `To` = 'default' order by `To`";
+    $sql = "SELECT * FROM twilite WHERE `To` LIKE '%$To%' or `To` = 'default' order by `To`";
     $stmt = $pdo->prepare($sql);
     $r = $stmt->execute();
     $rows = $stmt->fetchAll();
