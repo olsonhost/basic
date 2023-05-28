@@ -113,7 +113,7 @@ if ($rows) {
 <div class='main'>
     <div class="topside"></div>
     <div class="leftside"></div>
-    <div class="rightside"></div>
+    <div class="rightside"><pre id="code"></pre></div>
     <div style="clear:both"></div>
     <div class="bottomside"></div>
 
@@ -136,7 +136,7 @@ if ($rows) {
 -->
 <link media="all" rel="stylesheet" href="style.css" />
 <script defer="defer"  type="application/javascript" src="javascript.js" /></script>
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script>window.jQuery || document.write('<script src="https://getbootstrap.com/docs/4.0/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
 <script src="https://getbootstrap.com/docs/4.0/assets/js/vendor/popper.min.js"></script>
 <script src="https://getbootstrap.com/docs/4.0/dist/js/bootstrap.min.js"></script>
