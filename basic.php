@@ -78,6 +78,7 @@ class Basic {
 			self::$statements[self::$current_statement]->execute();
 			self::$current_statement++;
 		}
+        print '</Response>';
 	}
 	
 	/**
@@ -370,7 +371,11 @@ class Parser {
 				$this->position++;
 				$statements[] = new ExitStatement();
 			}
-			
+            else if ($this->current()->token == "say") {
+                // Parse the expression and create new print statement
+                $this->position++;
+                $statements[] = new SayStatement($this->expression());
+            }
 			// We're not sure what token this is, it's probably the end of the file. So, bye!
 			else {
 				break;
@@ -595,6 +600,21 @@ class PrintStatement implements Statement {
 }
 
 /**
+ * A "say" statement evaluates an expression, converts the result to a
+ * string, and returns TwiML.
+ */
+class SayStatement implements Statement {
+    public function __construct($expression) {
+        $this->expression = $expression;
+    }
+
+    public function execute() {
+        print '<Say>' . $this->expression->evaluate() . "</Say>\n";
+    }
+}
+
+
+/**
  * A "input" statement gets a line of input from the user and assigns it
  * to a variable.
  */
@@ -813,7 +833,7 @@ if (file_exists($sourcefi)) {
 
 } else {
 
-    //echo '< ? xml version="1.0" encoding="UTF-8" ? >   <Response>';
+    print "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Response>\n";
 
     $Digits = false;
 
@@ -832,7 +852,7 @@ if (file_exists($sourcefi)) {
     }
 
     try {
-
+        $To = $_REQUEST['To'] ?? 'Nope';
         $sql = "INSERT INTO twilio_log ($InsertFields `status`) VALUES ($QuestionMarks '0')";
         $stmt = $pdo->prepare($sql);
         $stmt->execute($InsertValues);
@@ -843,7 +863,7 @@ if (file_exists($sourcefi)) {
 
     // Now get the BASIC program from the Twilite SQL table
 
-    $sql = "SELECT * FROM twilite WHERE `To` = 'default'";
+    $sql = "SELECT * FROM twilite WHERE `To` LIKE '%%' or `To` = 'default' order by `To`";
     $stmt = $pdo->prepare($sql);
     $r = $stmt->execute();
     $rows = $stmt->fetchAll();
