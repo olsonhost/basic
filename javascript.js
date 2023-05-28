@@ -17,4 +17,13 @@ function getCode(url) {
 function showCode(data) {
     console.log(data);
     $('#code').text(data.code);
+    $('.save').removeClass('disabled');
 }
+
+$('.save').on('click', function() {
+
+    // Save the contents of #code back into the database
+
+    
+
+});

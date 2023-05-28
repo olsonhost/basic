@@ -35,3 +35,9 @@ body {
     padding:10px;
     background-color: #119DA4;
 }
+#code {
+    color:white;
+    font-family: Consolas;
+    font-size: 120%;
+
+}

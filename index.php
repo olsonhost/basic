@@ -79,7 +79,7 @@ if ($rows) {
                 <a class="nav-link" href="#">Run</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link disabled" href="#">Generate</a>
+                <a class="save nav-link disabled" href="#">Save</a>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Programs</a>
@@ -113,7 +113,7 @@ if ($rows) {
 <div class='main'>
     <div class="topside"></div>
     <div class="leftside"></div>
-    <div class="rightside"><pre id="code"></pre></div>
+    <div class="rightside"><pre contentEditable="true" id="code"></pre></div>
     <div style="clear:both"></div>
     <div class="bottomside"></div>
 
