@@ -1,12 +1,16 @@
 body {
     padding-top: 56px;
+    background-color: unset;
 }
 .starter-template {
     padding: 3rem 1.5rem;
     text-align: center;
 }
 .theme-navbar-color h4 {
-    color: white;
+    color: #80DED9;
+}
+.theme-navbar-color {
+    color: #80DED9;
 }
 .topside {
     width:100%;
@@ -39,5 +43,46 @@ body {
     color:white;
     font-family: Consolas;
     font-size: 120%;
+    padding: 6px;
+    overflow:scroll;
+    height:588px;
+    white-space: pre;
+
+}
+.container {
+
+
+}
+
+html {
+    background: url(images/twilight-wallpaper.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+.front-page {
+    color: #80DED9;
+}
+.register, .login {
+
+    background-color: #80DED9;
+    text-align: center;
+    width:400px;
+    padding: 9px;
+
+}
+td {
+    width: 50%;
+    text-align:right;
+    color: #3066BE;
+
+}
+input {
+    width: 100%;
+    text-align:left;
+    border: none;
+    outline: none;
+    color: #3066BE;
 
 }

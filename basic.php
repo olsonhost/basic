@@ -78,7 +78,11 @@ class Basic {
 			self::$statements[self::$current_statement]->execute();
 			self::$current_statement++;
 		}
-        print '</Response>';
+        if (php_sapi_name() != 'cli') {
+            print '</Response>';
+        } else {
+            echo "\ndone.\n";
+        }
 	}
 	
 	/**
@@ -788,25 +792,8 @@ class OperatorExpression implements Expression {
  **/
 class BasicParserException extends Exception { }
 
-$sourcefi = 'default.basic';
 
-if (php_sapi_name() == 'cli') {
-    // We need a file argument
-    if (!isset($argv[1])) {
-        echo "\nUsage: php basic.php <file>";
-        echo "\n       Where <file> is the BASIC file to parse\n";
-        exit(0);
-    } else {
-        $sourcefi = $argv[1];
-    }
-} else {
-    session_start();
-    if (isset($_REQUEST['src'])) {
-        $sourcefi = $_REQUEST['src'];
-    }
-
-}
-
+$sourcefi = '';
 $host = 'localhost';
 $db   = 'yore';
 $user = 'heidi';
@@ -825,6 +812,40 @@ try {
 } catch (\PDOException $e) {
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
+
+if (php_sapi_name() == 'cli') {
+    // We need a file argument
+    if (!isset($argv[1])) {
+        echo "\nUsage: php basic.php <file>";
+        echo "\n       Where <file> is the BASIC file to parse\n\n";
+
+        $basic = new Basic();
+
+        while(true){
+            $a = readline('twilite> ');
+            if (strtolower($a) == 'quit') exit(0);
+
+            $basic->interpret($a);
+
+            if (file_exists($a)) {
+                $sourcefi = $a;
+                break;
+            }
+
+        }
+
+    } else {
+        $sourcefi = $argv[1];
+    }
+} else {
+    session_start();
+    if (isset($_REQUEST['src'])) {
+        $sourcefi = $_REQUEST['src'];
+    }
+
+}
+
+
 
 // Get the file
 if (file_exists($sourcefi)) {

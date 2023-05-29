@@ -1,5 +1,8 @@
+var codeId=false;
+var codeTo=false;
+
 function doLoad(id) {
-    url = '/api.php?action=code&id=' + id;
+    var url = '/api.php?action=code&id=' + id;
     getCode(url);
 }
 
@@ -13,18 +16,35 @@ function getCode(url) {
         }
     });
 }
-
 function showCode(data) {
-    console.log(data);
+    codeId = data.id;
+    codeTo = data.To;
     $('#code').text(data.code);
     $('.save').removeClass('disabled');
     $('.leftside').html('<h3>' + data.To + '</h3><ul><li>New Function</li><li>New Library</li><li><ol><li>Main</li></ol></li></ul>')
 }
 
 $('.save').on('click', function() {
-    $('.bottomside').html('Program Saved');
-    // Save the contents of #code back into the database
-
-
-
+    var url = '/api.php?action=code';
+    var code = document.getElementById('code').innerText;
+    var data = {'id': codeId, 'To': codeTo, 'code': code};
+    storeCode(url, data);
 });
+
+function storeCode(url, data) {
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        url: url,
+        data: data,
+        success: function(data){
+            $('.bottomside').html('Program Saved'); // make this a scrolling log where we can also post call status updates!
+        },
+        error: function(a, b, c) {
+            console.log(a);
+            console.log(b);
+            console.log(c);
+            $('.bottomside').html('ERROR SAVING PROGRAM!');
+        }
+    });
+}

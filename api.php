@@ -19,14 +19,39 @@ try {
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 
-$id = $_GET['id'];
+// case action = code
 
-$sql = "SELECT * FROM twilite WHERE `id` = $id";
-$stmt = $pdo->prepare($sql);
-$r = $stmt->execute();
-$rows = $stmt->fetchAll();
-//var_dump($rows);
-if ($rows) {
-    $row=$rows[0];
-    exit(json_encode($row));
+if (isset($_GET['id'])) {
+
+    $id = $_GET['id'];
+
+    $sql = "SELECT * FROM twilite WHERE `id` = $id";
+    $stmt = $pdo->prepare($sql);
+    $r = $stmt->execute();
+    $rows = $stmt->fetchAll();
+
+    if ($rows) {
+        $row = $rows[0];
+        exit(json_encode($row));
+    }
+}
+if (isset($_POST['id'])) {
+
+    $id = $_POST['id'];
+    $code = $_POST['code'];
+    $To = $_POST['To'];
+
+    if ($id == '0') {
+        $sql = "INSERT INTO twilite SET `To` = ?, `code` = ?";
+        $stmt = $pdo->prepare($sql);
+        $r = $stmt->execute([$To, $code]);
+
+    } else {
+        $sql = "UPDATE twilite SET `To` = ?, `code` = ? WHERE `id` = ?";
+        $stmt = $pdo->prepare($sql);
+        $r = $stmt->execute([$To, $code, $id]);
+    }
+
+    // TODO:
+    exit(json_encode('OK')); // Need to send back ID so as we can do updates later without refreshing the page
 }
