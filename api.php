@@ -1,6 +1,10 @@
 <?php
 session_start();
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 $action = false;
 if (isset($_REQUEST['action'])) $action = $_REQUEST['action'];
 
@@ -34,6 +38,32 @@ try {
 
 switch ($action) {
 // case action = code
+
+    case 'new-program':
+        if (isset($_POST['id'])) {
+
+            $id = $_POST['id'];
+
+            $phone = $_REQUEST['phone'];
+            $sql = "SELECT * FROM twilite WHERE `To` LIKE '%$$phone%'";
+            $stmt = $pdo->prepare($sql);
+            $r = $stmt->execute();
+            $rows = $stmt->fetchAll();
+            //var_dump($rows);
+            if ($rows) {
+                $_SESSION['msg'] = "Twilio Phone Number $phone is already in use";
+                header('Location: /');
+                exit;
+            }
+            $code = "say \"Hello World\"";
+            $sql = "INSERT INTO twilite SET `To` = ?, `code` = ?, `user_id` = ?";
+            $stmt = $pdo->prepare($sql);
+            $r = $stmt->execute([$phone, $code, $id]);
+            $_SESSION['load'] = $pdo->lastInsertId();
+            header('Location: /');
+            exit;
+        }
+        break;
 
     case 'code':
 
@@ -75,7 +105,7 @@ switch ($action) {
 
     case 'logout':
             unset($_SESSION['id']);
-        $_SESSION['msg'] = 'You have been logged out';
+            $_SESSION['msg'] = 'You have been logged out';
             header('Location: /');
         break;
 

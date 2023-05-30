@@ -303,12 +303,24 @@ else // if not logged in
 <div class="modal-new" style="display:none;border: 1px solid white;position:fixed;top: 20%;left:20%; right:20%; background-color:rebeccapurple;color:white;font-size:120%;text-align:center;padding:21px; border-radius:2px;opacity:0.8;">
     <form method="post" action="/api.php">
         <input type='hidden' name='action' value='new-program'>
+        <input type='hidden' name='id' value='<?php echo $id; ?>'>
+        <center>
         <table>
             <tr>
                 <th>Twilio Number</th>
                 <td><input type="text" name="phone" placeholder="+18005551234" id="new-phone"></td>
             </tr>
 
+
+
+            <tr>
+                <th colspan="2">
+                    <br/>
+                    Set your Webhook URL to <u>https://evodialer.com/basic.php</u>
+                    <br/>
+                    <br/>
+                </th>
+            </tr>
 
             <tr>
                 <td colspan="2">
@@ -318,11 +330,23 @@ else // if not logged in
                 </td>
             </tr>
         </table>
-
+        </center>
     </form>
     <br/>
 
 </div>
+<?php if (isset($_SESSION['load'])) {
+    $progId = $_SESSION['load'];
+    unset($_SESSION['load']);
+    ?>
+<script>
+   console.log('doLoad with <?php echo $progId; ?>');
+   alert('Created Program ID <?php echo $progId; ?>');
+   setTimeout(function() {
+       doLoad('<?php echo $progId; ?>');
+   },1000);
 
+</script>
+<?php } ?>
 </body>
 </html>
