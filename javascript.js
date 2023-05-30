@@ -21,7 +21,7 @@ function showCode(data) {
     codeTo = data.To;
     $('#code').text(data.code);
     $('.save').removeClass('disabled');
-    $('.run').removeClass('disabled').attr('href', '/basic.php?To=' + data.To + '&From=' + data.To);
+    $('.run').removeClass('disabled').attr('href', '/basic.php?To=' + data.To + '&From=' + data.To + '&pre');
     $('.leftside').html('<h3>' + data.To + '</h3><ul><li>New Function</li><li>New Library</li><li><ol><li>Main</li></ol></li></ul>');
     $('.topside').html('Set your Webhook URL to <u>https://evodialer.com/basic.php</u> and dial ' + data.To);
 }

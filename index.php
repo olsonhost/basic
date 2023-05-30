@@ -182,10 +182,10 @@ else // if not logged in
                     <a class="nav-link" href="/">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Onsie</a>
+                    <a class="nav-link" href="/shots.html" target="_blank">Screenshots</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Twosie</a>
+                    <a class="nav-link" href="https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account">Get a Number</a>
                 </li>
             </ul>
 <!--            <h4><i class="bi bi-heart theme-navbar-color"></i></h4>-->
