@@ -96,10 +96,13 @@ if ($id) {
                 <a class="nav-link" href="/">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Run</a>
+                <a class="run nav-link disabled btn btn-outline-warning" href="#" target="_blank">Run</a>
             </li>
             <li class="nav-item">
-                <a class="save nav-link disabled" href="#">Save</a>
+                &nbsp;
+            </li>
+            <li class="nav-item">
+                <a class="save nav-link disabled btn btn-outline-success" href="#">Save</a>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Programs</a>

@@ -854,33 +854,39 @@ if (file_exists($sourcefi)) {
 
 } else {
 
+    if (isset($_GET['pre'])) echo('<body style="height:100%;"><textarea style="width:100%; height: 98vh;">');
+
     print "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Response>\n";
 
     $Digits = false;
 
     date_default_timezone_set('America/New_York');
 
-    file_put_contents('request.json', json_encode($_REQUEST, JSON_PRETTY_PRINT));
+    if (!isset($_GET['pre'])) {
 
-    $QuestionMarks = '';
-    $InsertFields = '';
-    $InsertValues = [];
+        file_put_contents('request.json', json_encode($_REQUEST, JSON_PRETTY_PRINT));
 
-    foreach ($_REQUEST as $fld => $val) {
-        $QuestionMarks .= '?, ';
-        $InsertFields .= "`$fld`,";
-        $InsertValues[] = $val;
-    }
+        $QuestionMarks = '';
+        $InsertFields = '';
+        $InsertValues = [];
 
-    try {
-        $To = $_REQUEST['To'] ?? 'Nope';
-        $sql = "INSERT INTO twilio_log ($InsertFields `status`) VALUES ($QuestionMarks '0')";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($InsertValues);
+        foreach ($_REQUEST as $fld => $val) {
+            $QuestionMarks .= '?, ';
+            $InsertFields .= "`$fld`,";
+            $InsertValues[] = $val;
+        }
 
-    } catch (\Exception $e) {
-        exit("<Sms>" . $e->getMessage() .  "</Sms></Response>");
-    }
+        try {
+
+            $To = trim($_REQUEST['To']) ?? 'Nope';
+            $sql = "INSERT INTO twilio_log ($InsertFields `status`) VALUES ($QuestionMarks '0')";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($InsertValues);
+
+        } catch (\Exception $e) {
+            exit("<Sms>" . $e->getMessage() . "</Sms></Response>");
+        }
+    } // pre
 
     // Now get the BASIC program from the Twilite SQL table
 
