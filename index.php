@@ -68,6 +68,11 @@ if ($id) {
 
 if ($id) {
 
+    $sql = "SELECT * FROM twilite WHERE user_id = ? order by `To`";
+    $stmt = $pdo->prepare($sql);
+    $r = $stmt->execute([ $id ]);
+    $trows = $stmt->fetchAll();
+
 ?>
 
 <!--
@@ -102,8 +107,8 @@ if ($id) {
                     <a class="dropdown-item" href="#">New Program</a>
                     <?php
 
-                    foreach($rows as $row) {
-                        echo "<a onclick=\"doLoad('{$row['id']}')\" class=\"dropdown-item\" href=\"#\">{$row['To']}</a>";
+                    foreach($trows as $trow) {
+                        echo "<a onclick=\"doLoad('{$trow['id']}')\" class=\"dropdown-item\" href=\"#\">{$trow['To']}</a>";
                     }
 
                     ?>

@@ -149,6 +149,12 @@ switch ($action) {
                 $stmt = $pdo->prepare($sql);
                 $r = $stmt->execute([$name, $email, $password]);
                 $_SESSION['id'] = $pdo->lastInsertId();
+
+                $sql = "INSERT INTO twilite SET `user_id` = ?, `To` = ? , `code` = ?";
+                $stmt = $pdo->prepare($sql);
+                $code = 'say "I\'m sorry, a twilight program has not been created for this phone number!"';
+                $r = $stmt->execute([$_SESSION['id'], 'default', $code]);
+
                 header('Location: /');
                 exit;
             } catch (\PDOException $e) {
