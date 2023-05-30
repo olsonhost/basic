@@ -104,7 +104,7 @@ if ($id) {
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Programs</a>
                 <div class="dropdown-menu" aria-labelledby="dropdown01">
-                    <a class="dropdown-item" href="#">New Program</a>
+                    <a class="dropdown-item" href="#" onclick="$('.modal-new').show()">New Program</a>
                     <?php
 
                     foreach($trows as $trow) {
@@ -296,8 +296,33 @@ else // if not logged in
 <div class="modal-msg" style=" border: 1px solid white;position:fixed;top: 20%;left:20%; right:20%; background-color:rebeccapurple;color:white;font-size:120%;text-align:center;padding:21px; border-radius:2px;opacity:0.8;">
     <?php echo $msg; ?>
     <br/>
-    <button class="btn btn-outline-light my-2 my-sm-0 msg-ok-button" onclick="$('.modal-msg').hide()" type="submit">OK</button>
+    <button class="btn btn-outline-light my-2 my-sm-0 msg-ok-button" onclick="$('.modal-msg').hide()">OK</button>
 </div>
 <?php } ?>
+
+<div class="modal-new" style="display:none;border: 1px solid white;position:fixed;top: 20%;left:20%; right:20%; background-color:rebeccapurple;color:white;font-size:120%;text-align:center;padding:21px; border-radius:2px;opacity:0.8;">
+    <form method="post" action="/api.php">
+        <input type='hidden' name='action' value='new-program'>
+        <table>
+            <tr>
+                <th>Twilio Number</th>
+                <td><input type="text" name="phone" placeholder="+18005551234" id="new-phone"></td>
+            </tr>
+
+
+            <tr>
+                <td colspan="2">
+                    <input class="btn btn-outline-warning my-2 my-sm-0 create-button" onclick="$('.modal-new').hide()" type="submit" value="Create">
+                    &nbsp;
+                    <button class="btn btn-outline-danger my-2 my-sm-0 cancel-button" onclick="$('.modal-new').hide()">Cancel</button>
+                </td>
+            </tr>
+        </table>
+
+    </form>
+    <br/>
+
+</div>
+
 </body>
 </html>

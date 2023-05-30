@@ -80,7 +80,7 @@ td {
     color: #3066BE;
 
 }
-input {
+input[type=text],input[type=email],input[type=password] {
     width: 100%;
     text-align:left;
     border: none;
