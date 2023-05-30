@@ -183,6 +183,7 @@ else // if not logged in
                 <br/>All you need is a Twilio account and Twilio phone number
                 <br/>Twilite is a simple BASIC-like language you can lean in minutes
                 <br/>
+                <br/>Super Easy * Barely an Inconvenience
             </p>
         </div>
 
