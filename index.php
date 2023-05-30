@@ -14,6 +14,13 @@
 <?php
 session_start();
 
+$msg = false;
+
+if (isset($_SESSION['msg'])) {
+    $msg = $_SESSION['msg'];
+    unset($_SESSION['msg']);
+}
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -52,7 +59,7 @@ if ($id) {
         $row = $rows[0];
         $id = $row['id'];
         $name = $row['name'];
-
+        $email = $row['email'];
     }
 
 }
@@ -73,7 +80,7 @@ if ($id) {
 ##    ## ##     ##    ###    ########  ##     ## ##     ##
 -->
 <nav class="navbar navbar-expand-md xnavbar-dark xbg-dark fixed-top">
-    <a class="navbar-brand" href="#">Twilite</a>
+    <a class="navbar-brand" href="/">Twilite</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -90,7 +97,7 @@ if ($id) {
                 <a class="save nav-link disabled" href="#">Save</a>
             </li>
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Programs</a>
+                <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Programs</a>
                 <div class="dropdown-menu" aria-labelledby="dropdown01">
                     <a class="dropdown-item" href="#">New Program</a>
                     <?php
@@ -99,13 +106,19 @@ if ($id) {
                         echo "<a onclick=\"doLoad('{$row['id']}')\" class=\"dropdown-item\" href=\"#\">{$row['To']}</a>";
                     }
 
-
                     ?>
-
                 </div>
             </li>
         </ul>
         <h4><i class="bi bi-gear theme-navbar-color"></i></h4>
+        <ul class="navbar-nav xmr-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $name; ?></a>
+                <div class="dropdown-menu" aria-labelledby="dropdown01">
+                    <a class="dropdown-item" href="/api.php?action=logout">Logout</a>
+                </div>
+            </li>
+        </ul>
     </div>
 </nav>
 <!--
@@ -150,7 +163,7 @@ else // if not logged in
 -->
 
     <nav class="navbar navbar-expand-md xnavbar-dark xbg-dark fixed-top">
-        <a class="navbar-brand" href="#">Twilite</a>
+        <a class="navbar-brand" href="/">Twilite</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -192,28 +205,28 @@ else // if not logged in
             <h1>Register</h1>
             <center>
             <div class="register">
-                <form autocomplete="off" method="post">
+                <form autocomplete="off" method="post" action = "/api.php">
                 <input type="hidden" name="action" value="register">
                 <table>
                     <tr>
-                        <td>Name&nbsp;&nbsp;&nbsp;</td>
-                        <td><input autocomplete="false" type="text" name="name" id="name"></td>
+                        <td>Your Full Name&nbsp;&nbsp;&nbsp;</td>
+                        <td><input autocomplete="false" type="text" name="name" id="reg-name"></td>
                     </tr>
                     <tr>
-                        <td>Email&nbsp;&nbsp;&nbsp;</td>
-                        <td><input autocomplete="none" type="email" name="email" id="email"></td>
+                        <td>Your Email&nbsp;&nbsp;&nbsp;</td>
+                        <td><input autocomplete="none" type="email" name="email" id="reg-email"></td>
                     </tr>
                     <tr>
-                        <td>Password&nbsp;&nbsp;&nbsp;</td>
-                        <td><input autocomplete="false" type="password" name="password" id="password"></td>
+                        <td>Enter a Password&nbsp;&nbsp;&nbsp;</td>
+                        <td><input autocomplete="false" type="password" name="password" id="reg-password" onchange="doPasswordCheck()"></td>
                     </tr>
                     <tr>
-                        <td>Password Again&nbsp;&nbsp;&nbsp;</td>
-                        <td><input autocomplete="false" type="password" name="password2" id="password2"></td>
+                        <td>Enter the Password Again&nbsp;&nbsp;&nbsp;</td>
+                        <td><input autocomplete="false" type="password" name="password2" id="reg-password2" onchange="doPasswordCheck()"></td>
                     </tr>
                     <tr>
                         <td></td>
-                        <td><input type="submit" value="Register" class="btn btn-primary"></td>
+                        <td><input id="reg-submit" type="submit" value="Register" disabled='disabled' class="btn btn-primary"></td>
                     </tr>
                 </table>
                 </form>
@@ -226,20 +239,20 @@ else // if not logged in
             <h1>Login</h1>
             <center>
                 <div class="login">
-                    <form autocomplete="off" method="post">
+                    <form autocomplete="off" method="post" action = "/api.php">
                         <input type="hidden" name="action" value="login">
                         <table>
                             <tr>
                                 <td>Email&nbsp;&nbsp;&nbsp;</td>
-                                <td><input autocomplete="none" type="email" name="email" id="email"></td>
+                                <td><input autocomplete="none" type="email" name="email" id="login-email" onchange="doLoginCheck()"></td>
                             </tr>
                             <tr>
                                 <td>Password&nbsp;&nbsp;&nbsp;</td>
-                                <td><input autocomplete="false" type="password" name="password" id="password"></td>
+                                <td><input autocomplete="false" type="password" name="password" id="login-password" onchange="doLoginCheck()"></td>
                             </tr>
                             <tr>
                                 <td></td>
-                                <td><input type="submit" value="Login" class="btn btn-primary"></td>
+                                <td><input type="submit" id="login-submit" value="Login" disabled="disabled" class="btn btn-primary"></td>
                             </tr>
                         </table>
                     </form>
@@ -274,5 +287,12 @@ else // if not logged in
 <script src="https://getbootstrap.com/docs/4.0/assets/js/vendor/popper.min.js"></script>
 <script src="https://getbootstrap.com/docs/4.0/dist/js/bootstrap.min.js"></script>
 <center style="font-size:xx-small;">Twilio is a registered trademark of Twilio Inc. and/or its affiliates. Other names may be trademarks of their respective owners</center>
+<?php if ($msg) { ?>
+<div class="modal-msg" style=" border: 1px solid white;position:fixed;top: 20%;left:20%; right:20%; background-color:rebeccapurple;color:white;font-size:120%;text-align:center;padding:21px; border-radius:2px;opacity:0.8;">
+    <?php echo $msg; ?>
+    <br/>
+    <button class="btn btn-outline-light my-2 my-sm-0 msg-ok-button" onclick="$('.modal-msg').hide()" type="submit">OK</button>
+</div>
+<?php } ?>
 </body>
 </html>

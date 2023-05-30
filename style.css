@@ -68,8 +68,10 @@ html {
 
     background-color: #80DED9;
     text-align: center;
-    width:400px;
+    width:472px;
     padding: 9px;
+    opacity: 0.8;
+    border-radius: 2px;
 
 }
 td {

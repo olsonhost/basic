@@ -1,4 +1,14 @@
 <?php
+session_start();
+
+$action = false;
+if (isset($_REQUEST['action'])) $action = $_REQUEST['action'];
+
+if (!$action) {
+    $_SESSION['msg'] = 'Invalid API action';
+    header('Location: /');
+    exit;
+}
 
 $host = 'localhost';
 $db   = 'yore';
@@ -16,42 +26,149 @@ $dsn = "mysql:host=$host;dbname=$db;charset=$charset;port=$port";
 try {
     $pdo = new \PDO($dsn, $user, $pass, $options);
 } catch (\PDOException $e) {
-    throw new \PDOException($e->getMessage(), (int)$e->getCode());
+    $_SESSION['msg'] = $e->getMessage();
+    header('Location: /');
+    exit;
+    //throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 
+switch ($action) {
 // case action = code
 
-if (isset($_GET['id'])) {
+    case 'code':
 
-    $id = $_GET['id'];
+        if (isset($_GET['id'])) {
 
-    $sql = "SELECT * FROM twilite WHERE `id` = $id";
-    $stmt = $pdo->prepare($sql);
-    $r = $stmt->execute();
-    $rows = $stmt->fetchAll();
+            $id = $_GET['id'];
 
-    if ($rows) {
-        $row = $rows[0];
-        exit(json_encode($row));
-    }
-}
-if (isset($_POST['id'])) {
+            $sql = "SELECT * FROM twilite WHERE `id` = $id";
+            $stmt = $pdo->prepare($sql);
+            $r = $stmt->execute();
+            $rows = $stmt->fetchAll();
 
-    $id = $_POST['id'];
-    $code = $_POST['code'];
-    $To = $_POST['To'];
+            if ($rows) {
+                $row = $rows[0];
+                exit(json_encode($row));
+            }
+        }
+        if (isset($_POST['id'])) {
 
-    if ($id == '0') {
-        $sql = "INSERT INTO twilite SET `To` = ?, `code` = ?";
-        $stmt = $pdo->prepare($sql);
-        $r = $stmt->execute([$To, $code]);
+            $id = $_POST['id'];
+            $code = $_POST['code'];
+            $To = $_POST['To'];
 
-    } else {
-        $sql = "UPDATE twilite SET `To` = ?, `code` = ? WHERE `id` = ?";
-        $stmt = $pdo->prepare($sql);
-        $r = $stmt->execute([$To, $code, $id]);
-    }
+            if ($id == '0') {
+                $sql = "INSERT INTO twilite SET `To` = ?, `code` = ?";
+                $stmt = $pdo->prepare($sql);
+                $r = $stmt->execute([$To, $code]);
 
-    // TODO:
-    exit(json_encode('OK')); // Need to send back ID so as we can do updates later without refreshing the page
+            } else {
+                $sql = "UPDATE twilite SET `To` = ?, `code` = ? WHERE `id` = ?";
+                $stmt = $pdo->prepare($sql);
+                $r = $stmt->execute([$To, $code, $id]);
+            }
+
+            // TODO:
+            exit(json_encode('OK')); // Need to send back ID so as we can do updates later without refreshing the page
+        }
+        break;
+
+    case 'logout':
+            unset($_SESSION['id']);
+        $_SESSION['msg'] = 'You have been logged out';
+            header('Location: /');
+        break;
+
+    case 'login':
+
+        $email = $_POST['email'] ?? false;
+        $password = $_POST['password'] ?? false;
+
+        if (!$email or !$password) {
+            $_SESSION['msg'] = 'Invalid Login Info';
+            header('Location: /');
+        }
+
+        try {
+            $sql = "SELECT * FROM users WHERE `email` = ? and `password` = ?";
+            $stmt = $pdo->prepare($sql);
+            $r = $stmt->execute([$email, $password]);
+            $rows = $stmt->fetchAll();
+        } catch (\PDOException $e) {
+            $_SESSION['msg'] = $e->getMessage();
+            header('Location: /');
+            exit;
+        }
+
+        if ($rows) {
+            $row = $rows[0];
+            $_SESSION['id'] = $row['id'];
+            header('Location: /');
+            exit;
+        }
+
+        break;
+
+    case 'register':
+
+        $id = $_POST['id'] ?? false;
+        $name = $_POST['name'] ?? false;
+        $email = $_POST['email'] ?? false;
+        $password = $_POST['password'] ?? false;
+        $password2 = $_POST['password2'] ?? false;
+
+        if (!$name or !$email or !$password or !$password2 ) {
+
+            $_SESSION['msg'] = 'Invalid Registration Info';
+            header('Location: /');
+        }
+
+
+
+        if ($id == '0') {
+
+            try {
+                $sql = "SELECT * FROM users WHERE `email` = ?";
+                $stmt = $pdo->prepare($sql);
+                $r = $stmt->execute([$email]);
+                $rows = $stmt->fetchAll();
+            } catch (\PDOException $e) {
+                $_SESSION['msg'] = $e->getMessage();
+                header('Location: /');
+                exit;
+            }
+
+            if ($rows) {
+                $_SESSION['msg'] = 'Invalid Registration Info: Email Already Exists';
+                header('Location: /');
+                exit;
+            }
+
+            try {
+                $sql = "INSERT INTO users SET `name` = ?, `email` = ?, `password` = ?";
+                $stmt = $pdo->prepare($sql);
+                $r = $stmt->execute([$name, $email, $password]);
+                $_SESSION['id'] = $pdo->lastInsertId();
+                header('Location: /');
+                exit;
+            } catch (\PDOException $e) {
+                $_SESSION['msg'] = $e->getMessage();
+                header('Location: /');
+                exit;
+            }
+        }
+//        else {
+//        $sql = "UPDATE users SET `name` = ?, `email` = ?, `password` = ? WHERE `id` = ?";
+//        $stmt = $pdo->prepare($sql);
+//        $r = $stmt->execute([$name, $email, $password, $id]);
+//        }
+
+
+        break;
+
+    default:
+
+        $_SESSION['msg'] = 'Unknown API Action: ' . $action;
+        header('Location: /');
+
 }
